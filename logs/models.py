@@ -30,7 +30,7 @@ from fluo.db import models
 
 
 class LogManager(models.Manager):
-    def log(self, level=None, message='', user=None, object=None):
+    def log(self, level=None, message='', user=None, object=None, realm=None):
         kwargs = {
             'message': message,
         }
@@ -42,25 +42,27 @@ class LogManager(models.Manager):
             kwargs['content_type_id'] = ContentType.objects.get_for_model(object).pk
             kwargs['object_id'] = object.pk
             kwargs['object_repr'] = force_text(object)[:255]
+        if realm is not None:
+            kwargs['realm'] = realm
 
         log = self.model(**kwargs)
         log.save()
         return log
 
-    def debug(self, message, user=None, object=None):
-        return self.log(level=Log.DEBUG, message=message, user=user, object=object)
+    def debug(self, message, user=None, object=None, realm=None):
+        return self.log(level=Log.DEBUG, message=message, user=user, object=object, realm=realm)
 
-    def info(self, message, user=None, object=None):
-        return self.log(level=Log.INFO, message=message, user=user, object=object)
+    def info(self, message, user=None, object=None, realm=None):
+        return self.log(level=Log.INFO, message=message, user=user, object=object, realm=realm)
 
-    def warning(self, message, user=None, object=None):
-        return self.log(level=Log.WARNING, message=message, user=user, object=object)
+    def warning(self, message, user=None, object=None, realm=None):
+        return self.log(level=Log.WARNING, message=message, user=user, object=object, realm=realm)
 
-    def error(self, message, user=None, object=None):
-        return self.log(level=Log.ERROR, message=message, user=user, object=object)
+    def error(self, message, user=None, object=None, realm=None):
+        return self.log(level=Log.ERROR, message=message, user=user, object=object, realm=realm)
 
-    def critical(self, message, user=None, object=None):
-        return self.log(level=Log.CRITICAL, message=message, user=user, object=object)
+    def critical(self, message, user=None, object=None, realm=None):
+        return self.log(level=Log.CRITICAL, message=message, user=user, object=object, realm=realm)
 
 
 @python_2_unicode_compatible
@@ -120,6 +122,12 @@ class Log(models.Model):
         default='',
         blank=True,
         verbose_name=_('message'),
+    )
+    realm = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('realm'),
+        help_text=_('realm'),
     )
 
     class Meta:

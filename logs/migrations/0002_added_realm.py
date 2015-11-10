@@ -21,32 +21,19 @@
 # THE SOFTWARE.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-from fluo import admin
-from fluo import forms
-from .models import Log
+from django.db import migrations, models
 
 
-class LogForm(forms.ModelForm):
-    pass
-class LogAdmin(admin.ModelAdmin):
-    form = LogForm
-    ordering = ["-timestamp"]
-    list_display = ["timestamp", "realm", "level", "_message"]
-    list_filter = ["level"]
-    search_fields = ["level", "message"]
-    related_search_fields = {
-        "user": ("pk", "username", "first_name", "last_name", "email"),
-    }
+class Migration(migrations.Migration):
 
-    def has_add_permission(self, request):
-        return False
-    def get_readonly_fields(self, request, obj=None):
-        return self.readonly_fields + ("level", "realm", "message", "timestamp")
-    def _message(self, obj):
-        l = 60
-        if len(obj.message) > l:
-            msg = "{}...".format(obj.message[:l])
-        else:
-            msg = obj.message
-        return msg
-admin.site.register(Log, LogAdmin)
+    dependencies = [
+        ('logs', '0001_initial'),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name='log',
+            name='realm',
+            field=models.TextField(verbose_name='realm', help_text='realm', blank=True, null=True),
+        ),
+    ]
