@@ -30,20 +30,20 @@ from fluo.db import models
 
 
 class LogManager(models.Manager):
-    def log(self, level=None, message='', user=None, object=None, realm=None):
+    def log(self, level=None, message="", user=None, object=None, realm=None):
         kwargs = {
-            'message': message,
+            "message": message,
         }
         if level is not None:
-            kwargs['level'] = level
+            kwargs["level"] = level
         if user is not None:
-            kwargs['user'] = user
+            kwargs["user"] = user
         if object is not None:
-            kwargs['content_type_id'] = ContentType.objects.get_for_model(object).pk
-            kwargs['object_id'] = object.pk
-            kwargs['object_repr'] = force_text(object)[:255]
+            kwargs["content_type_id"] = ContentType.objects.get_for_model(object).pk
+            kwargs["object_id"] = object.pk
+            kwargs["object_repr"] = force_text(object)[:255]
         if realm is not None:
-            kwargs['realm'] = realm
+            kwargs["realm"] = realm
 
         log = self.model(**kwargs)
         log.save()
@@ -67,12 +67,12 @@ class LogManager(models.Manager):
 
 @python_2_unicode_compatible
 class Log(models.Model):
-    NOTSET = 'notset'
-    DEBUG = 'debug'
-    INFO = 'info'
-    WARNING = 'warning'
-    ERROR = 'error'
-    CRITICAL = 'critical'
+    NOTSET = "notset"
+    DEBUG = "debug"
+    INFO = "info"
+    WARNING = "warning"
+    ERROR = "error"
+    CRITICAL = "critical"
 
     objects = LogManager()
 
@@ -80,65 +80,65 @@ class Log(models.Model):
         settings.AUTH_USER_MODEL,
         blank=True,
         null=True,
-        verbose_name=_('user'),
+        verbose_name=_("user"),
     )
     timestamp = models.CreationDateTimeField(
         null=True,
         blank=True,
-        verbose_name=_('timestamp'),
+        verbose_name=_("timestamp"),
     )
     level = models.CharField(
         max_length=255,
         default=NOTSET,
         choices=(
-            (NOTSET, _('Not set')),
-            (DEBUG, _('Debug')),
-            (INFO, _('Info')),
-            (WARNING, _('Warning')),
-            (ERROR, _('Error')),
-            (CRITICAL, _('Critical')),
+            (NOTSET, _("Not set")),
+            (DEBUG, _("Debug")),
+            (INFO, _("Info")),
+            (WARNING, _("Warning")),
+            (ERROR, _("Error")),
+            (CRITICAL, _("Critical")),
         ),
-        verbose_name=_('level'),
+        verbose_name=_("level"),
     )
     content_type = models.ForeignKey(
         ContentType,
         blank=True,
         null=True,
-        verbose_name=_('content type'),
+        verbose_name=_("content type"),
     )
     object_id = models.TextField(
-        default='',
+        default="",
         blank=True,
         #null=True,
-        verbose_name=_('object id'),
+        verbose_name=_("object id"),
     )
     object_repr = models.CharField(
         max_length=255,
-        default='',
+        default="",
         blank=True,
-        verbose_name=_('object repr'),
+        verbose_name=_("object repr"),
     )
     message = models.TextField(
-        default='',
+        default="",
         blank=True,
-        verbose_name=_('message'),
+        verbose_name=_("message"),
     )
     realm = models.TextField(
         blank=True,
         null=True,
-        verbose_name=_('realm'),
-        help_text=_('realm'),
+        verbose_name=_("realm"),
+        help_text=_("realm"),
     )
 
     class Meta:
-        ordering = ('-timestamp',)
-        verbose_name = _('log')
-        verbose_name_plural = _('logs')
+        ordering = ["-timestamp"]
+        verbose_name = _("log")
+        verbose_name_plural = _("logs")
 
     def __str__(self):
-        msg = ugettext('%(timestamp)s %(level)s %(message)s')
-        return msg % {
-            'timestamp': self.timestamp,
-            'level': self.level,
-            'message': self.message[:255],
-        }
+        msg = ugettext("{timestamp} {level} {message}")
+        return msg.format(
+            timestamp=self.timestamp,
+            level=self.level,
+            message=self.message[:255],
+        )

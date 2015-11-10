@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(verbose_name='user', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
-                'ordering': ('-timestamp',),
+                'ordering': ['-timestamp'],
                 'verbose_name': 'log',
                 'verbose_name_plural': 'logs',
             },
