@@ -53,7 +53,7 @@ class LogForm(forms.ModelForm):
 class LogAdmin(admin.ModelAdmin):
     form = LogForm
     ordering = ["-timestamp"]
-    list_display = ["timestamp", "realm", "level", "_message"]
+    list_display = ["timestamp", "realm", "level", "_short_message"]
     list_filter = [RealmFilter, "level"]
     search_fields = ["level", "realm", "message"]
     related_search_fields = {
@@ -64,11 +64,12 @@ class LogAdmin(admin.ModelAdmin):
         return False
     def get_readonly_fields(self, request, obj=None):
         return self.readonly_fields + ("level", "realm", "message", "timestamp")
-    def _message(self, obj):
+    def _short_message(self, obj):
         l = 60
         if len(obj.message) > l:
             msg = "{}...".format(obj.message[:l])
         else:
             msg = obj.message
         return msg
+    _short_message.short_description = _("Message")
 admin.site.register(Log, LogAdmin)
