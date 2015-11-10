@@ -30,17 +30,16 @@ class LogForm(forms.ModelForm):
     pass
 class LogAdmin(admin.ModelAdmin):
     form = LogForm
-    ordering = ('-timestamp',)
-    list_display = ('timestamp', 'level', 'message',)
-    list_filter = ('level',)
-    search_fields = ('level','message',)
+    ordering = ["-timestamp"]
+    list_display = ["timestamp", "level", "message"]
+    list_filter = ["level"]
+    search_fields = ["level", "message"]
     related_search_fields = {
-        'user': ('pk', 'username', 'first_name', 'last_name', 'email'),
+        "user": ("pk", "username", "first_name", "last_name", "email"),
     }
 
     def has_add_permission(self, request):
         return False
-
     def get_readonly_fields(self, request, obj=None):
-        return self.readonly_fields + ('level', 'message', 'timestamp')
+        return self.readonly_fields + ("level", "message", "timestamp")
 admin.site.register(Log, LogAdmin)
