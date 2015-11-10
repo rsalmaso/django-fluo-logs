@@ -33,7 +33,7 @@ class LogAdmin(admin.ModelAdmin):
     ordering = ["-timestamp"]
     list_display = ["timestamp", "realm", "level", "_message"]
     list_filter = ["level"]
-    search_fields = ["level", "message"]
+    search_fields = ["level", "realm", "message"]
     related_search_fields = {
         "user": ("pk", "username", "first_name", "last_name", "email"),
     }
