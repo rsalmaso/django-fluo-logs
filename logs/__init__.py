@@ -41,3 +41,32 @@ class LogHandler(logging.Handler):
             pass
 
         return
+
+
+class Logger(object):
+    def __init__(self, realm=None):
+        self.realm = realm
+
+    def log(self, level=None, message="", user=None, object=None):
+        from .models import Log
+        Log.objects.log(level=level, message=message, user=user, object=object, realm=self.realm)
+
+    def debug(self, message, user=None, object=None, realm=None):
+        from .models import Log
+        Log.objects.log(level=Log.DEBUG, message=message, user=user, object=object, realm=self.realm)
+
+    def info(self, message, user=None, object=None, realm=None):
+        from .models import Log
+        Log.objects.log(level=Log.INFO, message=message, user=user, object=object, realm=self.realm)
+
+    def warning(self, message, user=None, object=None, realm=None):
+        from .models import Log
+        Log.objects.log(level=Log.WARNING, message=message, user=user, object=object, realm=self.realm)
+
+    def error(self, message, user=None, object=None, realm=None):
+        from .models import Log
+        Log.objects.log(level=Log.ERROR, message=message, user=user, object=object, realm=self.realm)
+
+    def critical(self, message, user=None, object=None, realm=None):
+        from .models import Log
+        Log.objects.log(level=Log.CRITICAL, message=message, user=user, object=object, realm=self.realm)
