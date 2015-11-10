@@ -65,7 +65,7 @@ class LogAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
     def get_readonly_fields(self, request, obj=None):
-        return self.readonly_fields + ("level", "realm", "_message", "timestamp")
+        return self.readonly_fields + ("user", "content_type", "object_id", "object_repr", "level", "realm", "_message", "timestamp")
     def _short_message(self, obj):
         l = 60
         if len(obj.message) > l:
