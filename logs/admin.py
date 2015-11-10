@@ -21,9 +21,31 @@
 # THE SOFTWARE.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+from django.utils.translation import ugettext, ugettext_lazy as _
+from django.contrib.admin import SimpleListFilter
 from fluo import admin
 from fluo import forms
 from .models import Log
+
+
+class RealmFilter(SimpleListFilter):
+    title = _("realm")
+    parameter_name = "realm"
+
+    def lookups(self, request, model_admin):
+        rows = []
+        for row in Log.objects.order_by("realm").distinct().values_list("realm", flat=True):
+            rows.append((row, row) if row else ("--unset--", ugettext("Not set")))
+        return rows
+
+    def queryset(self, request, queryset):
+        realm = self.value()
+        if realm == "--unset--":
+            return queryset.filter(realm__isnull=True)
+        elif realm:
+            return queryset.filter(realm__iexact=realm)
+        else:
+            return queryset
 
 
 class LogForm(forms.ModelForm):
@@ -32,7 +54,7 @@ class LogAdmin(admin.ModelAdmin):
     form = LogForm
     ordering = ["-timestamp"]
     list_display = ["timestamp", "realm", "level", "_message"]
-    list_filter = ["level"]
+    list_filter = [RealmFilter, "level"]
     search_fields = ["level", "realm", "message"]
     related_search_fields = {
         "user": ("pk", "username", "first_name", "last_name", "email"),
