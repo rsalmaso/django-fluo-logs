@@ -21,6 +21,7 @@
 # THE SOFTWARE.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.contrib.admin import SimpleListFilter
 from fluo import admin
@@ -59,11 +60,12 @@ class LogAdmin(admin.ModelAdmin):
     related_search_fields = {
         "user": ("pk", "username", "first_name", "last_name", "email"),
     }
+    exclude = ["message"]
 
     def has_add_permission(self, request):
         return False
     def get_readonly_fields(self, request, obj=None):
-        return self.readonly_fields + ("level", "realm", "message", "timestamp")
+        return self.readonly_fields + ("level", "realm", "_message", "timestamp")
     def _short_message(self, obj):
         l = 60
         if len(obj.message) > l:
@@ -72,4 +74,7 @@ class LogAdmin(admin.ModelAdmin):
             msg = obj.message
         return msg
     _short_message.short_description = _("Message")
+    def _message(self, obj):
+        return mark_safe(obj.message.replace("\n", "<br/>").replace("\r", ""))
+    _message.short_description = _("Message")
 admin.site.register(Log, LogAdmin)
