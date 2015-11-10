@@ -31,7 +31,7 @@ class LogForm(forms.ModelForm):
 class LogAdmin(admin.ModelAdmin):
     form = LogForm
     ordering = ["-timestamp"]
-    list_display = ["timestamp", "level", "message"]
+    list_display = ["timestamp", "level", "_message"]
     list_filter = ["level"]
     search_fields = ["level", "message"]
     related_search_fields = {
@@ -42,4 +42,11 @@ class LogAdmin(admin.ModelAdmin):
         return False
     def get_readonly_fields(self, request, obj=None):
         return self.readonly_fields + ("level", "message", "timestamp")
+    def _message(self, obj):
+        l = 60
+        if len(obj.message) > l:
+            msg = "{}...".format(obj.message[:l])
+        else:
+            msg = obj.message
+        return msg
 admin.site.register(Log, LogAdmin)
