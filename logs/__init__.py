@@ -31,6 +31,9 @@ __author__  = "Raffaele Salmaso"
 __email__ = "raffaele@salmaso.org"
 
 
+default_app_config = "logs.apps.LogsConfig"
+
+
 class LogHandler(logging.Handler):
     def emit(self, record):
         try:
